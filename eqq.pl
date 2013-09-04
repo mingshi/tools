@@ -33,15 +33,15 @@ binmode(STDOUT, ':utf8');
 
 my $alarm_type = 'qq';
 my $alarm_receiver = {
-    qq => [ '258047659', '224156865' ],
+    qq => [ 'xxxxxxxxx', 'xxxxxxxxx' ],
 };
 
 my @sessions = (
     {
         user => '2194866839',
-        passwd => 'xxxxxx',
+        passwd => 'xxxxxxxxx',
         session_id => '147bf3a6b608e670337f93959b3a1164',
-        skey => '@FfoX2Cck0',
+        skey => '@WBbxgwawo',
     },
 );
 
@@ -60,14 +60,37 @@ sub login
 
             my ($is_need_verify, $code1, $code2) = split(',', $res2->res->body);
             $is_need_verify = ($is_need_verify =~ m/'(.+)'/)[0];
-
+            
             if (my (@tmpArr) = split('\'', $res2->res->body)) {
                 my $verifycode = $tmpArr[3];
                 if ($is_need_verify) {
-                    print "Get verify code and save it to /var/tmp/image1 \n";
-                    _get_verify_code($session->{user}, $verifycode);
-                    $verifycode = uc(<>);
-                    $verifycode =~ s/\n//g;
+                    print "Get verify code and save it to /var/tmp/image.jpg \n";
+                    _get_verify_code($ua, $session->{user}, $verifycode);
+                    
+                    my $r = `scp /var/tmp/image.jpg wukong:/var/tmp/qqImage.jpg`;
+                    
+                    my $qq = join(',', @{$alarm_receiver->{qq}});
+
+                    my $tmpUrl = "http://2.2.2.2:9888/?qq=".$qq."&content=Robot登录需要验证码:\n [image:/var/tmp/qqImage.jpg]";
+                    
+                    my $imageRes = $ua->get($tmpUrl);
+
+                    for (my $i = 0; $i < 120; $i++) {
+                        sleep(1);
+                        next unless (-f "/tmp/qqCode");
+                    
+                        open my $fh, '<:utf8', '/tmp/qqCode';
+                        my $code = do { local $/ = <$fh> };
+                        close $fh;
+                        $verifycode = uc($code);
+                        $verifycode =~ s/\n//g;
+                        unlink "/tmp/qqCode";
+                        last;
+                    }
+
+                    unless ($verifycode =~  /^[A-Z0-9]{4}$/) {
+                        $err_msg = "验证码获取失败";
+                    }
                 }
 
                 my $code2 = $tmpArr[5];
@@ -79,6 +102,7 @@ sub login
                 my $res3 = $ua->get($thirdUrl);
 
                 my @tmp = split('\'', $res3->res->body);
+                print(decode('UTF-8', $res3->res->body));
                 if ($tmp[1] != 0) {
                     $err_msg = "Spider qq login error when login in at EQQ";
                 } else {
@@ -101,11 +125,10 @@ sub login
 login();
 
 sub _get_verify_code {
-    my $ua = Mojo::UserAgent->new();
-    my ($username, $vc) = @_;
+    my ($ua, $username, $vc) = @_;
     my $uin = $username;
-    my $res = $ua->get("https://captcha.qq.com/getimage?aid=15000103&0.5957159416021285&uin=$uin")->res;
-    open(MYFILE, '>:raw', "/var/tmp/image1");
+    my $res = $ua->get("http://captcha.qq.com/getimage?aid=15000103&0.5957159416021285&uin=$uin")->res;
+    open(MYFILE, '>:raw', "/var/tmp/image.jpg");
     print MYFILE $res->body;
     close(MYFILE);
 }
@@ -228,11 +251,11 @@ for my $session (@sessions) {
 }
 
 if ($err_msg) {
-    M('alarm_queue', 'ad_report')->insert({
-        send_type => $alarm_type,
-        send_to => encode_json($alarm_receiver),
-        msg => $err_msg,
-    });
+    #M('alarm_queue', 'ad_report')->insert({
+    #    send_type => $alarm_type,
+    #    send_to => encode_json($alarm_receiver),
+    #    msg => $err_msg,
+    #});
 
     die $err_msg;
 }
