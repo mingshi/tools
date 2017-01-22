@@ -1,7 +1,7 @@
 /**
  * @overview
  *
- * @author ${author}
+ * @author Mingshi <fivemingshi@gmail.com>
  * @version ${date}
  */
 

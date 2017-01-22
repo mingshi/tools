@@ -1,0 +1,8 @@
+let g:netrw_dirhistmax  =10
+let g:netrw_dirhist_cnt =6
+let g:netrw_dirhist_1='/Users/mingshi/pro/innotect/pma.backend/app/Orm'
+let g:netrw_dirhist_2='/usr/local/etc/nginx/vhost'
+let g:netrw_dirhist_3='/Users/mingshi/pro/innotect/pma.backend/app/Orm'
+let g:netrw_dirhist_4='/Users/mingshi/pro/innotect/pma.backend/resources/views/feature'
+let g:netrw_dirhist_5='/Users/mingshi/pro/innotect/pma.backend/resources/views/friend'
+let g:netrw_dirhist_6='/Users/mingshi/Downloads/2016-10-13'
