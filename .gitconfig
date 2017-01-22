@@ -1,0 +1,17 @@
+[user]
+	name = mingshi
+	email = fivemingshi@gmail.com
+[color]
+	diff = auto
+	status = auto
+    branch = auto
+    log = auto
+[alias]
+    st = status  
+    ci = commit  
+    br = branch  
+    co = checkout  
+    df = diff
+    cm = commit
+[core]
+	excludesfile = /Users/mingshi/.gitignoreglobal

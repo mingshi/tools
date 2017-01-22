@@ -1,0 +1,174 @@
+set nocompatible              " be iMproved, required
+filetype off                  " required
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+Plugin 'othree/html5.vim'
+call vundle#end()            " required
+filetype plugin indent on
+
+set fileencodings=utf-8,ucs-bom,gbk,gb2312,gb18030,cp936
+set nocompatible	" Use Vim defaults (much better!)
+set bs=indent,eol,start		" allow backspacing over everything in insert mode
+"set ai			" always set autoindenting on
+"set backup		" keep a backup file
+set viminfo='20,\"50	" read/write a .viminfo file, don't store more
+			" than 50 lines of registers
+set history=50		" keep 50 lines of command line history
+set ruler		" show the cursor position all the time
+
+" Only do this part when compiled with support for autocommands
+if has("autocmd")
+  augroup redhat
+    " In text files, always limit the width of text to 78 characters
+    autocmd BufRead *.txt set tw=100
+    " When editing a file, always jump to the last cursor position
+    autocmd BufReadPost *
+    \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+    \   exe "normal! g'\"" |
+    \ endif
+  augroup END
+endif
+
+if has("cscope") && filereadable("/usr/bin/cscope")
+   set csprg=/usr/bin/cscope
+   set csto=0
+   set cst
+   set nocsverb
+   " add any database in current directory
+   if filereadable("cscope.out")
+      cs add cscope.out
+   " else add database pointed to by environment
+   elseif $CSCOPE_DB != ""
+      cs add $CSCOPE_DB
+   endif
+   set csverb
+endif
+
+" Switch syntax highlighting on, when the terminal has colors
+" Also switch on highlighting the last used search pattern.
+if &t_Co > 2 || has("gui_running")
+  syntax on
+  set hlsearch
+endif
+
+if &term=="xterm"
+     set t_Co=8
+     set t_Sb=[4%dm
+     set t_Sf=[3%dm
+endif
+
+set nocp
+set backspace=indent,eol,start
+set enc=utf-8
+set fenc=utf-8
+set fencs=utf-8,ucs-bom,gb18030,gbk,gb2312,cp936
+set langmenu=zh_CN.UTF-8
+set term=xterm-256color
+
+set nu
+set autoindent
+set cindent                        
+set nobackup 
+set fileformat=unix
+set ai
+
+"Set tab stop
+set tabstop=4	" 实际的 tab 即为 4 个空格, tabstop = 4 is better for c programming
+set shiftwidth=4  "设置自动缩进 4 个空格, 当然要设自动缩进先.
+set softtabstop=4  "即设置 softtabstop 为 4. 输入 tab 后就跳了 4 格.
+set expandtab    "在输入 tab 后, vim 用恰当的空格来填充这个 tab.
+
+set textwidth=120
+
+set history=300
+
+"au Filetype python setl et ts=4 sw=4
+
+"GUI 设置
+set gfn=Monaco:h14
+set go-=T
+"set mouse=a
+set clipboard+=unnamed
+
+filetype on
+filetype indent on
+filetype plugin on
+map <F5> :!ruby % <CR>
+
+"设置','为leader快捷键
+let mapleader = ","
+let g:mapleader = ","
+
+" Fast saving
+nmap <leader>s :w!<cr>
+nmap <leader>w :wq!<cr>
+nmap <leader>q :q!<cr>
+nmap <F5> :w<Esc>:!perl %<cr>
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => Plugins
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"TList
+let Tlist_Ctags_Cmd = 'ctags'    "ctags.exe放在vim安装目录
+let Tlist_Show_One_File = 1      "只显示一个taglist窗口
+let Tlist_Exit_OnlyWindow = 1    "vim退出时taglist也退出
+:nmap <f5> :tabprevious<CR>
+:nmap <f6> :tabnext<CR>
+:nmap <leader>t :TlistToggle<CR>
+:nmap <leader>r :!clear && php <C-R>%<CR>
+
+"NERD Tree
+let NERDChristmasTree=1
+let NERDTreeAutoCenter=1
+let NERDTreeBookmarksFile=$HOME.'/.vim_NerdBookmarks.txt'
+let NERDTreeMouseMode=2
+let NERDTreeShowBookmarks=1
+let NERDTreeShowFiles=1
+let NERDTreeShowHidden=0
+let NERDTreeShowLineNumbers=1
+let NERDTreeWinPos='left'
+let NERDTreeWinSize=31
+nnoremap <silent> <leader>f :NERDTreeToggle<CR>
+
+let xterm16_brightness = 'low' 
+let xterm16_colormap = 'allblue'
+let xterm16_monitor = 'CRT'
+colo xterm16
+
+"map <F10> :set paste<CR>
+"map <F11> :set nopaste<CR>
+
+source ~/.vim/php-doc.vim 
+inoremap <C-P> <ESC>:call PhpDocSingle()<CR>i
+nnoremap <C-P> :call PhpDocSingle()<CR>
+vnoremap <C-P> :call PhpDocRange()<CR>
+
+autocmd BufNewFile,Bufread *.ros,*.inc,*.php set keywordprg="help"
+set runtimepath+=~/.vim/php
+
+map <F5> <Esc>:EnableFastPHPFolds<Cr>
+map <F6> <Esc>:EnablePHPFolds<Cr>
+map <F7> <Esc>:DisablePHPFolds<Cr>
+
+"自定义快捷键
+nnoremap <F2> :set nonumber! number?<CR>
+nnoremap <F3> :set list! list?<CR>
+nnoremap <F4> :set wrap! wrap?<CR>
+set pastetoggle=<F10>
+
+"以上 2014-03-03
+
+set nonumber
+
+let g:DisableAutoPHPFolding = 1
+
+"跨终端复制粘贴
+"copy the current visual selection to ~/.vbuf 
+vmap <leader>y :w! ~/.vbuf<cr> 
+""copy the current line to the buffer file if no visual selection  
+nmap <leader>y :.w! ~/.vbuf<cr>  
+"paste the contents of the buffer file  
+nmap <leader>p :r ~/.vbuf<cr>
+let g:rsenseHome = "$RSENSE_HOME"
+
+let g:omni_sql_no_default_maps = 1
